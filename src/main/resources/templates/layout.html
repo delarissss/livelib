@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Livelib - <span th:replace="${title}">Главная</span></title>
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a href="/">Главная</a></li>
+      <li sec:authorize="isAnonymous()"><a href="/users/login">Вход</a></li>
+      <li sec:authorize="isAnonymous()"><a href="/users/register">Регистрация</a></li>
+      <li sec:authorize="isAuthenticated()"><a href="/users/profile">Профиль</a></li>
+      <li sec:authorize="isAuthenticated()"><a href="/books/all">Все книги</a></li>
+      <li sec:authorize="isAuthenticated()"><a href="/reading-log/my-books">Мой дневник</a></li>
+      <li sec:authorize="isAuthenticated()"><a href="/user-preferences/my-preferences">Мои предпочтения</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a href="/reviews/admin">Модерация отзывов</a></li>
+      <li sec:authorize="isAuthenticated()">
+        <form th:action="@{/users/logout}" method="post" style="display:inline;">
+          <button type="submit">Выйти</button>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <div th:replace="${content}">Content</div>
+</main>
+<footer>
+  <p>&copy; 2025 Livelib. Все права защищены.</p>
+</footer>
+</body>
+</html>>

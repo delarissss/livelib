@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+  <title>Главная</title>
+</head>
+<body>
+<div id="content">
+  <h1>Добро пожаловать в Livelib!</h1>
+  <div sec:authorize="isAnonymous()">
+    <p>Пожалуйста, <a href="/users/login">войдите</a> или <a href="/users/register">зарегистрируйтесь</a>, чтобы начать использовать сервис.</p>
+  </div>
+  <div sec:authorize="isAuthenticated()">
+    <p>Привет, <span th:text="${user.username}">User</span>!</p>
+    <p>Вы можете:</p>
+    <ul>
+      <li><a href="/books/all">Просмотреть все книги</a></li>
+      <li><a href="/reading-log/my-books">Управление читательским дневником</a></li>
+      <li><a href="/user-preferences/my-preferences">Управление предпочтениями</a></li>
+    </ul>
+  </div>
+
+  <h2>Популярные книги</h2>
+  <div>
+    <div th:each="book : ${featuredBooks}">
+      <h3><a th:href="@{/books/details/{id}(id=${book.id})}" th:text="${book.title}">Название книги</a></h3>
+      <p th:text="${book.author.fullName}">Автор</p>
+      <p th:text="${book.averageRating}">Рейтинг</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
