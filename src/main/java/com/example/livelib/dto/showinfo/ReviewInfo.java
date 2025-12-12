@@ -7,13 +7,12 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class RLInfo {
+public class ReviewInfo {
     private String id;
     private UserInfo user;
     private BookInfo book;
+    private String reviewText;
     private Integer rating;
-    private String note;
-    private String status; // PLANNED, READING, FINISHED
-    private LocalDateTime dateFinished;
+    private Boolean isModerated;
     private LocalDateTime createdAt;
 }

@@ -12,7 +12,8 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, String> { // Используем String для UUID
 
     List<Book> findByAuthorId(Long authorId);
-    List<Book> findByGenres_Id(Long genreId); // Поиск по жанру
+    List<Book> findByGenres_Id(Long genreId);
+    List<Book> findByTitle(String title);// Поиск по жанру
 
     @Query("SELECT DISTINCT a FROM Author a JOIN a.books b WHERE b.publicationYear > :year")
     List<Author> findAuthorsWithBooksPublishedAfter(int year);

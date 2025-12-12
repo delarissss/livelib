@@ -8,22 +8,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity implements Serializable {
 
-    @Setter
-    @Getter
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Setter
-    @Getter
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Setter
-    @Getter
     @Column(nullable = false)
     private String password;
 

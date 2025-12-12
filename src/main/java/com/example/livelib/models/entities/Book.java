@@ -23,7 +23,7 @@ public class Book extends BaseEntity {
     private String isbn;
 
     @Column(nullable = false)
-    private String publication_year;
+    private String publicationYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
@@ -45,12 +45,4 @@ public class Book extends BaseEntity {
 
     public Book() {
     }
-
-    public Book(String title, String description, String isbn, String publication_year) {
-        this.title = title;
-        this.description = description;
-        this.isbn = isbn;
-        this.publication_year = publication_year;
-    }
-
 }
