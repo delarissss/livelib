@@ -3,10 +3,8 @@ package com.example.livelib.dto.create;
 import com.example.livelib.utils.validation.UniqueEmail;
 import com.example.livelib.utils.validation.UniqueUsername;
 import jakarta.validation.constraints.*;
-import lombok.Data;
 import lombok.Setter;
 
-@Data
 @Setter
 public class UserRegistrationDto {
 

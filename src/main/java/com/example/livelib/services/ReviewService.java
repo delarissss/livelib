@@ -1,9 +1,7 @@
-// src/main/java/com/example/livelib/services/ReviewService.java
 package com.example.livelib.services;
 
 import com.example.livelib.dto.create.ReviewCreateDto;
 import com.example.livelib.dto.showinfo.ReviewInfo;
-
 import java.util.List;
 
 public interface ReviewService {
@@ -15,4 +13,5 @@ public interface ReviewService {
     void markReviewAsModerated(String reviewId); // Для администратора
     void deleteReview(String id); // Для администратора
     void deleteReviewsByUserId(String userId); // При удалении пользователя
+    Double getAverageRatingForBook(String bookId);
 }

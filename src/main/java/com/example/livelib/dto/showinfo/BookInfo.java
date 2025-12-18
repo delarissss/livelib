@@ -1,12 +1,10 @@
 package com.example.livelib.dto.showinfo;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 public class BookInfo {
     private String id;
     private String title;
@@ -15,6 +13,6 @@ public class BookInfo {
     private Integer publicationYear;
     private AuthorInfo author;
     private List<GenreInfo> genres;
-    private Long reviewCount; // Количество модерированных отзывов
-    private Double averageRating; // Средний рейтинг книги
+    private Double averageRating;
+    private Long reviewCount;
 }

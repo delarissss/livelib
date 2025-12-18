@@ -1,4 +1,4 @@
-// src/main/java/com/example/livelib/services/impl/AuthServiceImpl.java
+
 package com.example.livelib.services.impl;
 
 import com.example.livelib.dto.create.UserRegistrationDto;
@@ -20,7 +20,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;

@@ -1,28 +1,49 @@
 package com.example.livelib.dto.create;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
+import jakarta.validation.constraints.*;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Setter
 public class ReadingLogCreateDto {
 
-    @NotNull(message = "ID пользователя обязателен")
     private String userId;
+    private String bookId;
+    private Integer rating;
+    private String note;
+    private String status;
+    private LocalDateTime dateFinished;
+
+
+    @NotNull(message = "ID пользователя обязателен")
+    public String getUserId() {
+        return userId;
+    }
 
     @NotNull(message = "ID книги обязателен")
-    private String bookId;
+    public String getBookId() {
+        return bookId;
+    }
 
     @Positive(message = "Оценка должна быть от 1 до 10")
-    private Integer rating;
+    public Integer getRating() {
+        return rating;
+    }
 
     @Size(max = 1000, message = "Заметка не может превышать 1000 символов")
-    private String note;
+    public String getNote() {
+        return note;
+    }
 
-    private String status;
+    @NotEmpty(message = "У заметки и книге должен быть статус")
+    public String getStatus() {
+        return status;
+    }
 
-    private LocalDateTime dateFinished;
+    @PastOrPresent(message = "Дата завершения чтения не может быть в будущем")
+    public LocalDateTime getDateFinished() {
+        return dateFinished;
+    }
+
 }

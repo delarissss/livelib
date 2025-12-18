@@ -8,8 +8,11 @@ import lombok.Setter;
 @Data
 @Setter
 public class GenreCreateDto {
+    private String name;
 
     @NotBlank(message = "Название жанра обязательно")
     @Size(max = 100, message = "Название жанра не может превышать 100 символов")
-    private String name;
+    public String getName() {
+        return name;
+    }
 }

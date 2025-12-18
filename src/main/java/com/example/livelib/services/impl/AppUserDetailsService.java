@@ -1,5 +1,5 @@
 // src/main/java/com/example/livelib/security/AppUserDetailsService.java
-package com.example.livelib.security;
+package com.example.livelib.services.impl;
 
 import com.example.livelib.repos.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -76,8 +76,8 @@ public class Init implements CommandLineRunner {
 
         var adminUser = new User(
                 "admin",
-                passwordEncoder.encode(defaultPassword),
-                "admin@example.com"
+                "admin@example.com",
+                passwordEncoder.encode(defaultPassword)
         );
         adminUser.setRoles(List.of(adminRole));
         userRepository.save(adminUser);
@@ -91,8 +91,9 @@ public class Init implements CommandLineRunner {
 
         var moderatorUser = new User(
                 "moderator",
-                passwordEncoder.encode(defaultPassword),
-                "moderator@example.com"
+                "moderator@example.com",
+                passwordEncoder.encode(defaultPassword)
+
         );
         moderatorUser.setRoles(List.of(moderatorRole));
         userRepository.save(moderatorUser);
@@ -106,8 +107,9 @@ public class Init implements CommandLineRunner {
 
         var normalUser = new User(
                 "user",
-                passwordEncoder.encode(defaultPassword),
-                "user@example.com"
+                "user@example.com",
+                passwordEncoder.encode(defaultPassword)
+
         );
         normalUser.setRoles(List.of(userRole));
         userRepository.save(normalUser);

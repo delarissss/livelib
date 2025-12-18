@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -111,29 +109,21 @@ public class UserPreferenceServiceImpl implements UserPreferenceService {
 
     // --- Вспомогательные методы ---
 
-    private boolean validateItemExists(ItemType type, Long itemId) {
-        switch (type) {
-            case GENRE:
-                return genreRepository.existsById(String.valueOf(itemId));
-            case AUTHOR:
-                return authorRepository.existsById(String.valueOf(itemId));
-            case BOOK:
-                return bookRepository.existsById(String.valueOf(itemId));
-            default:
-                return false;
-        }
+    private boolean validateItemExists(ItemType type, String itemId) {
+        return switch (type) {
+            case GENRE -> genreRepository.existsById(itemId);
+            case AUTHOR -> authorRepository.existsById(itemId);
+            case BOOK -> bookRepository.existsById(itemId);
+            default -> false;
+        };
     }
 
-    private String getItemNameByIdAndType(Long itemId, ItemType type) {
-        switch (type) {
-            case GENRE:
-                return genreRepository.findById(String.valueOf(itemId)).map(Genre::getName).orElse("Unknown Genre");
-            case AUTHOR:
-                return authorRepository.findById(String.valueOf(itemId)).map(Author::getFullName).orElse("Unknown Author");
-            case BOOK:
-                return bookRepository.findById(String.valueOf(itemId)).map(Book::getTitle).orElse("Unknown Book");
-            default:
-                return "Unknown Item";
-        }
+    private String getItemNameByIdAndType(String itemId, ItemType type) {
+        return switch (type) {
+            case GENRE -> genreRepository.findById(itemId).map(Genre::getName).orElse("Unknown Genre");
+            case AUTHOR -> authorRepository.findById(itemId).map(Author::getFullName).orElse("Unknown Author");
+            case BOOK -> bookRepository.findById(itemId).map(Book::getTitle).orElse("Unknown Book");
+            default -> "Unknown Item";
+        };
     }
 }

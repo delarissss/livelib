@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Профиль - LiveLib</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Главная</a></li>
+      <li><a th:href="@{/books/all}">Все книги</a></li>
+      <li><a th:href="@{/books/search}">Поиск</a></li>
+      <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+      <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+      <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+      <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Профиль пользователя: <span th:text="${user.username}">Имя пользователя</span></h1>
+  <p th:text="'Email: ' + ${user.email}">Email</p>
+  <p th:text="'Роли: ' + ${#strings.listJoin(user.roles, ', ')}">Роли</p>
+
+  <h2>Ваши книги</h2>
+  <div th:each="statusEntry : ${booksByStatus}">
+    <h3 th:text="${statusEntry.key}">Статус</h3>
+    <ul>
+      <li th:each="rl : ${statusEntry.value}">
+        <a th:href="@{/books/details/{id}(id=${rl.book.id})}" th:text="${rl.book.title}">Название книги</a>
+        - Оценка: <span th:if="${rl.rating != null}" th:text="${rl.rating}">Оценка</span><span th:unless="${rl.rating != null}">Не оценено</span>,
+        Заметка: <span th:if="${rl.note != null}" th:text="${rl.note}">Заметка</span><span th:unless="${rl.note != null}">Нет</span>
+        <a th:href="@{/reading-log/edit/{id}(id=${rl.id})}">Редактировать</a>
+      </li>
+    </ul>
+  </div>
+
+  <a th:href="@{/reading-log/my-books}">Посмотреть все книги в дневнике</a>
+  <a th:href="@{/user-preferences/my-preferences}">Управление предпочтениями</a>
+</main>
+
+<footer>
+  <!-- Подвал -->
+</footer>
+</body>
+</html>

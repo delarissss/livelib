@@ -1,12 +1,10 @@
 package com.example.livelib.dto.showinfo;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 public class RLInfo {
     private String id;
     private UserInfo user;
@@ -15,5 +13,4 @@ public class RLInfo {
     private String note;
     private String status; // PLANNED, READING, FINISHED
     private LocalDateTime dateFinished;
-    private LocalDateTime createdAt;
 }

@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -16,7 +18,7 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition = "ΤΕΧΤ", nullable = false)
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false, unique = true)
@@ -35,7 +37,7 @@ public class Book extends BaseEntity {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<Genre> genres = new ArrayList<>();
+    private Set<Genre> genres = new HashSet<>();
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReadingLog> readingLogs = new ArrayList<>();

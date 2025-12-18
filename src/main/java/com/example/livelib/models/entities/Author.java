@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -17,10 +17,7 @@ public class Author extends BaseEntity {
     private String fullName;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Book> books = new ArrayList<>();
-
-    public Author() {
-    }
+    private Set<Book> books = new HashSet<>();
 
     public Author(String firstName, String lastName) {
         this.fullName = firstName + " " + lastName;

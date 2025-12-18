@@ -11,22 +11,21 @@ import lombok.Setter;
 @Table(name = "user_preferences")
 public class UserPreference extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @Column(name = "item_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
     @Column(name = "item_id", nullable = false)
-    private Long itemId; // ID конкретного жанра, автора или книги
+    private String itemId; // ID конкретного жанра, автора или книги
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public UserPreference() {
     }
 
-    public UserPreference(User user, ItemType itemType, Long itemId) {
+    public UserPreference(User user, ItemType itemType, String itemId) {
         this.user = user;
         this.itemType = itemType;
         this.itemId = itemId;

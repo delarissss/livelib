@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${book.title} + ' - LiveLib'">Детали книги</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Главная</a></li>
+            <li><a th:href="@{/books/all}">Все книги</a></li>
+            <li><a th:href="@{/books/search}">Поиск</a></li>
+            <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+            <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+            <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+            <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h1 th:text="${book.title}">Название книги</h1>
+    <p th:text="'Автор: ' + ${book.author.fullName}">Автор</p>
+    <p th:text="'ISBN: ' + ${book.isbn}">ISBN</p>
+    <p th:text="'Год публикации: ' + ${book.publicationYear}">Год публикации</p>
+    <p th:text="'Жанры: ' + ${#strings.listJoin(book.genres.![name], ', ')}">Жанры</p>
+    <p th:if="${book.averageRating != null}" th:text="'Средний рейтинг: ' + ${#numbers.formatDecimal(book.averageRating, 1, 2)} + ' (' + ${book.reviewCount} + ' оценок)')">Рейтинг</p>
+    <p th:unless="${book.averageRating != null}">Средний рейтинг: Нет оценок</p>
+    <p th:text="${book.description}">Описание книги</p>
+
+    <div sec:authorize="isAuthenticated()">
+        <h3>Добавить в читательский дневник</h3>
+        <a th:href="@{/reading-log/add/{bookId}(bookId=${book.id})}">Добавить книгу</a>
+    </div>
+
+    <div>
+        <h3>Отзывы</h3>
+        <div th:if="${#lists.isEmpty(reviews)}">
+            <p>Пока нет модерированных отзывов.</p>
+        </div>
+        <div th:each="review : ${reviews}" class="review">
+            <h4 th:text="${review.user.username}">Имя пользователя</h4>
+            <p th:text="'Оценка: ' + ${review.rating}">Оценка</p>
+            <p th:text="${review.reviewText}">Текст отзыва</p>
+        </div>
+    </div>
+
+    <div sec:authorize="isAuthenticated()">
+        <h3>Оставить отзыв</h3>
+        <form th:action="@{/reviews/add}" th:object="${reviewForm}" method="post">
+            <input type="hidden" th:field="*{bookId}" th:value="${book.id}">
+            <input type="hidden" th:field="*{userId}"> <!-- Может быть заполнено на сервере, но для Thymeleaf нужно передать -->
+            <label for="rating">Оценка (1-10):</label>
+            <input type="number" id="rating" th:field="*{rating}" min="1" max="10" required><br><br>
+            <label for="reviewText">Текст отзыва:</label><br>
+            <textarea id="reviewText" th:field="*{reviewText}" rows="4" cols="50" required></textarea><br><br>
+            <button type="submit">Отправить отзыв (на модерацию)</button>
+        </form>
+    </div>
+
+</main>
+
+<footer>
+    <!-- Подвал -->
+</footer>
+</body>
+</html>

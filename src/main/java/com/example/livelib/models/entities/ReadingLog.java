@@ -22,7 +22,6 @@ public class ReadingLog extends BaseEntity {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-
     @Column(columnDefinition = "integer check (rating >= 1 and rating <= 10)")
     private Integer rating;
 

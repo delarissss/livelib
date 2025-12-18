@@ -1,17 +1,26 @@
 package com.example.livelib.dto.create;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Setter;
 
-@Data
+@Setter
 public class UserPreferenceCreateDto {
 
-    @NotNull(message = "ID пользователя обязателен")
+    private String itemType;
+    private String itemId;
     private String userId;
 
     @NotNull(message = "Тип элемента обязателен")
-    private String itemType; // "GENRE", "AUTHOR", "BOOK"
+    public String getItemType() {
+        return itemType;
+    } // "GENRE", "AUTHOR", "BOOK"
 
     @NotNull(message = "ID элемента обязателен")
-    private Long itemId;
+    public String getItemId() {
+        return itemId;
+    }
+    @NotNull(message = "ID пользователя обязательно")
+    public String getUserId() { // <-- Геттер для userId
+        return userId;
+    }
 }

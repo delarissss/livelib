@@ -1,4 +1,3 @@
-// src/main/java/com/example/livelib/services/impl/ReviewServiceImpl.java
 package com.example.livelib.services.impl;
 
 import com.example.livelib.dto.create.ReviewCreateDto;
@@ -16,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +23,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
-
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
@@ -36,13 +33,11 @@ public class ReviewServiceImpl implements ReviewService {
     @CacheEvict(value = {"reviews", "book"}, allEntries = true) // Очищаем кэш книги, так как изменится статистика
     public void createReview(ReviewCreateDto reviewCreateDto) {
         log.debug("Создание отзыва для книги ID: {} от пользователя ID: {}", reviewCreateDto.getBookId(), reviewCreateDto.getUserId());
-
         User user = userRepository.findById(reviewCreateDto.getUserId())
                 .orElseThrow(() -> {
                     log.warn("Пользователь не найден при создании отзыва, ID: {}", reviewCreateDto.getUserId());
                     return new RuntimeException("User not found with id: " + reviewCreateDto.getUserId());
                 });
-
         Book book = bookRepository.findById(reviewCreateDto.getBookId())
                 .orElseThrow(() -> {
                     log.warn("Книга не найдена при создании отзыва, ID: {}", reviewCreateDto.getBookId());
@@ -54,7 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setBook(book);
         review.setReviewText(reviewCreateDto.getReviewText());
         review.setRating(reviewCreateDto.getRating());
-        // isModerated по умолчанию false
+        // isModerated по умолчанию false, как в сущности
 
         reviewRepository.save(review);
         log.info("Отзыв создан для книги '{}' пользователем '{}'", book.getTitle(), user.getUsername());
@@ -63,9 +58,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewInfo> findReviewsByBookId(String bookId) {
         log.debug("Поиск модерированных отзывов для книги ID: {}", bookId);
-        List<Review> reviews = reviewRepository.findAll().stream()
-                .filter(r -> r.getBook().getId().equals(bookId) && r.getIsModerated())
-                .collect(Collectors.toList()); // Пока что в памяти, для малого количества ОК
+        // Используем метод репозитория для фильтрации по bookId и isModerated
+        List<Review> reviews = reviewRepository.findByBookIdAndIsModeratedTrue(bookId);
         return reviews.stream()
                 .map(review -> modelMapper.map(review, ReviewInfo.class))
                 .collect(Collectors.toList());
@@ -105,7 +99,7 @@ public class ReviewServiceImpl implements ReviewService {
     @CacheEvict(value = {"reviews", "book"}, allEntries = true) // Очищаем кэш книги, так как изменится статистика
     public void markReviewAsModerated(String reviewId) {
         log.debug("Модерация отзыва ID: {}", reviewId);
-        reviewRepository.markAsModerated(reviewId);
+        reviewRepository.markAsModerated(reviewId); // Этот метод уже есть в репозитории
         log.info("Отзыв ID {} отмечен как модерированный", reviewId);
     }
 
@@ -129,5 +123,12 @@ public class ReviewServiceImpl implements ReviewService {
         log.debug("Удаление всех отзывов пользователя ID: {}", userId);
         reviewRepository.deleteByUserId(userId);
         log.info("Все отзывы пользователя ID {} удалены", userId);
+    }
+
+    @Override
+    public Double getAverageRatingForBook(String bookId) {
+        log.debug("Получение среднего рейтинга для книги ID: {}", bookId);
+        // Используем метод репозитория для вычисления среднего
+        return reviewRepository.calculateAverageRatingForBook(bookId);
     }
 }

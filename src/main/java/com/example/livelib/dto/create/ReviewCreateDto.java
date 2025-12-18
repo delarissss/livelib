@@ -1,24 +1,37 @@
 package com.example.livelib.dto.create;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.Setter;
 
-@Data
+@Setter
 public class ReviewCreateDto {
 
-    @NotNull(message = "ID пользователя обязателен")
     private String userId;
+    private String bookId;
+    private String reviewText;
+    private Integer rating;
+
+    @NotNull(message = "ID пользователя обязателен")
+    public String getUserId() {
+        return userId;
+    }
 
     @NotNull(message = "ID книги обязателен")
-    private String bookId;
+    public String getBookId() {
+        return bookId;
+    }
 
     @NotBlank(message = "Текст отзыва обязателен")
     @Size(max = 5000, message = "Отзыв не может превышать 5000 символов")
-    private String reviewText;
+    public String getReviewText() {
+        return reviewText;
+    }
 
-    @Positive(message = "Рейтинг должен быть от 1 до 10")
-    private Integer rating;
+    @Positive(message = "Рейтинг должен быть больше 0")
+    @Min(value = 1, message = "Минимальный рейтинг 1")
+    @Max(value = 10, message = "Максимальный рейтинг 10")
+    public Integer getRating() {
+        return rating;
+    }
 }

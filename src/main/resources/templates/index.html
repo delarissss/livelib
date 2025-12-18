@@ -1,32 +1,45 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Главная</title>
+  <meta charset="UTF-8">
+  <title>Главная - LiveLib</title>
+  <!-- Подключите ваш CSS файл -->
+  <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div id="content">
-  <h1>Добро пожаловать в Livelib!</h1>
-  <div sec:authorize="isAnonymous()">
-    <p>Пожалуйста, <a href="/users/login">войдите</a> или <a href="/users/register">зарегистрируйтесь</a>, чтобы начать использовать сервис.</p>
-  </div>
-  <div sec:authorize="isAuthenticated()">
-    <p>Привет, <span th:text="${user.username}">User</span>!</p>
-    <p>Вы можете:</p>
+<header>
+  <!-- Шапка с навигацией -->
+  <nav>
     <ul>
-      <li><a href="/books/all">Просмотреть все книги</a></li>
-      <li><a href="/reading-log/my-books">Управление читательским дневником</a></li>
-      <li><a href="/user-preferences/my-preferences">Управление предпочтениями</a></li>
+      <li><a th:href="@{/}">Главная</a></li>
+      <li><a th:href="@{/books/all}">Все книги</a></li>
+      <li><a th:href="@{/books/search}">Поиск</a></li>
+      <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+      <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+      <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+      <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
     </ul>
-  </div>
+  </nav>
+</header>
 
-  <h2>Популярные книги</h2>
-  <div>
-    <div th:each="book : ${featuredBooks}">
+<main>
+  <h1>Добро пожаловать в LiveLib!</h1>
+  <h2>Топ книг по рейтингу</h2>
+  <div class="book-grid">
+    <div th:each="book : ${featuredBooks}" class="book-card">
       <h3><a th:href="@{/books/details/{id}(id=${book.id})}" th:text="${book.title}">Название книги</a></h3>
       <p th:text="${book.author.fullName}">Автор</p>
-      <p th:text="${book.averageRating}">Рейтинг</p>
+      <p th:if="${book.averageRating != null}" th:text="'Рейтинг: ' + ${#numbers.formatDecimal(book.averageRating, 1, 2)}">Рейтинг</p>
+      <p th:unless="${book.averageRating != null}">Рейтинг: Нет оценок</p>
+      <p th:text="${#strings.abbreviate(book.description, 100)}">Краткое описание</p>
     </div>
   </div>
-</div>
+</main>
+
+<footer>
+  <!-- Подвал -->
+</footer>
 </body>
 </html>

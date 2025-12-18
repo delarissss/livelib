@@ -2,8 +2,12 @@
 package com.example.livelib.web;
 
 import com.example.livelib.dto.create.UserRegistrationDto;
+import com.example.livelib.dto.showinfo.RLInfo;
+import com.example.livelib.dto.showinfo.UserInfo;
 import com.example.livelib.models.entities.User;
 import com.example.livelib.services.AuthService;
+import com.example.livelib.services.ReadingLogService;
+import com.example.livelib.services.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -21,10 +28,14 @@ import java.security.Principal;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
+    private final ReadingLogService readingLogService;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserService userService, ReadingLogService readingLogService) {
         this.authService = authService;
+        this.userService = userService;
+        this.readingLogService = readingLogService;
         log.info("AuthController инициализирован");
     }
 
@@ -76,9 +87,31 @@ public class AuthController {
     public String profile(Principal principal, Model model) {
         String username = principal.getName();
         log.debug("Отображение профиля пользователя: {}", username);
-        // Получаем информацию о пользователе через AuthService
-        User userInfo = authService.getUser(username);
+
+        // Получаем информацию о пользователе
+        UserInfo userInfo = userService.findUserByUsername(username); // Используем UserService для получения UserInfo
+        if (userInfo == null) {
+            log.warn("Профиль запрашивается для несуществующего пользователя: {}", username);
+            return "redirect:/users/login"; // Или ошибка 404
+        }
+
+        // Получаем записи в дневнике пользователя
+        List<RLInfo> readingLogs = readingLogService.findReadingLogsByUserId(userInfo.getId());
+
+        // Группируем книги по статусам
+        Map<String, List<RLInfo>> booksByStatus = readingLogs.stream()
+                .collect(Collectors.groupingBy(
+                        rl -> rl.getStatus() != null ? rl.getStatus() : "UNKNOWN" // Обработка null статуса
+                ));
+
         model.addAttribute("user", userInfo);
+        model.addAttribute("booksByStatus", booksByStatus); // Передаем сгруппированные книги
         return "users/profile";
+    }
+    // В AuthController
+    @GetMapping("/users/login-error")
+    public String loginError(Model model) {
+        model.addAttribute("loginError", true); // Передаем флаг ошибки в шаблон
+        return "users/login"; // Возвращаем шаблон входа
     }
 }
