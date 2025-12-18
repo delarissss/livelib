@@ -14,11 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.DelegatingSecurityContextRepository;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
+
 
 @Slf4j
 @Configuration
@@ -32,7 +28,7 @@ public class AppSecurityConfiguration {
     // Удалили старый конструктор, так как Lombok его создаст
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextRepository securityContextRepository) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
                         // Позволяем доступ к статическим ресурсам, favicon, ошибкам
@@ -49,8 +45,8 @@ public class AppSecurityConfiguration {
                 )
                 .formLogin(form -> form
                         .loginPage("/users/login") // Страница входа
-                        .usernameParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY) // Параметр имени пользователя (обычно 'username')
-                        .passwordParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY) // Параметр пароля (обычно 'password')
+                        .usernameParameter("username") // Параметр имени пользователя
+                        .passwordParameter("password") // Параметр пароля
                         .defaultSuccessUrl("/", true) // Куда перенаправить после успешного входа
                         .failureUrl("/users/login-error") // Куда перенаправить при ошибке входа
                         .permitAll() // Позволяем всем видеть страницу входа
@@ -67,10 +63,6 @@ public class AppSecurityConfiguration {
                         .deleteCookies("JSESSIONID", "remember-me") // Удаление куки
                         .permitAll() // Позволяем всем выполнить выход
                 )
-                // Настройка SecurityContextRepository
-                .securityContext(securityContext -> securityContext
-                        .securityContextRepository(securityContextRepository)
-                )
                 // Отключаем CSRF для упрощения (в production может потребоваться включить)
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/actuator/**") // Игнорировать CSRF для actuator, если используется
@@ -80,13 +72,7 @@ public class AppSecurityConfiguration {
         return http.build();
     }
 
-    @Bean
-    public SecurityContextRepository securityContextRepository() {
-        return new DelegatingSecurityContextRepository(
-                new RequestAttributeSecurityContextRepository(),
-                new HttpSessionSecurityContextRepository()
-        );
-    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
