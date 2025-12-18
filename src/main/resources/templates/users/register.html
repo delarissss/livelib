@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Регистрация - LiveLib</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <!-- (Опционально) Bootstrap CSS для стилей alert -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Главная</a></li>
+      <li><a th:href="@{/books/all}">Все книги</a></li>
+      <li><a th:href="@{/books/search}">Поиск</a></li>
+      <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+      <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+      <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+      <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="container mt-4">
+  <h1>Регистрация</h1>
+
+  <!-- Отображение сообщения об успехе -->
+  <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
+    Сообщение об успехе
+  </div>
+
+  <!-- Отображение общего сообщения об ошибке -->
+  <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">
+    Сообщение об ошибке
+  </div>
+
+  <form th:action="@{/users/register}" th:object="${userRegistrationDto}" method="post">
+    <!-- Отображение глобальных ошибок валидации (если есть) -->
+    <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+      <ul>
+        <li th:each="err : ${#fields.errors('global')}" th:text="${err}">Глобальная ошибка</li>
+      </ul>
+    </div>
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Имя пользователя:</label>
+      <input type="text" id="username" th:field="*{username}" class="form-control" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'">
+      <!-- Отображение ошибки для конкретного поля -->
+      <div th:if="${#fields.hasErrors('username')}" class="invalid-feedback" th:errors="*{username}">Ошибка имени пользователя</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email:</label>
+      <input type="email" id="email" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+      <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback" th:errors="*{email}">Ошибка email</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Пароль:</label>
+      <input type="password" id="password" th:field="*{password}" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+      <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback" th:errors="*{password}">Ошибка пароля</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="confirmPassword" class="form-label">Подтверждение пароля:</label>
+      <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'">
+      <div th:if="${#fields.hasErrors('confirmPassword')}" class="invalid-feedback" th:errors="*{confirmPassword}">Ошибка подтверждения пароля</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+  </form>
+  <p><a th:href="@{/users/login}">Уже есть аккаунт? Войти</a></p>
+</main>
+
+<footer>
+  <!-- Подвал -->
+</footer>
+<!-- (Опционально) Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

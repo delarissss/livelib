@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Поиск книг - LiveLib</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Главная</a></li>
+      <li><a th:href="@{/books/all}">Все книги</a></li>
+      <li><a th:href="@{/books/search}">Поиск</a></li>
+      <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+      <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+      <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+      <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Результаты поиска</h1>
+  <p th:text="'По запросу &quot;' + ${searchQuery} + '&quot; найдено:'">Результаты</p>
+  <div class="book-grid">
+    <div th:each="book : ${books}" class="book-card">
+      <h3><a th:href="@{/books/details/{id}(id=${book.id})}" th:text="${book.title}">Название книги</a></h3>
+      <p th:text="${book.author.fullName}">Автор</p>
+      <p th:if="${book.averageRating != null}" th:text="'Рейтинг: ' + ${#numbers.formatDecimal(book.averageRating, 1, 2)}">Рейтинг</p>
+      <p th:unless="${book.averageRating != null}">Рейтинг: Нет оценок</p>
+      <p th:text="${#strings.abbreviate(book.description, 100)}">Краткое описание</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <!-- Подвал -->
+</footer>
+</body>
+</html>

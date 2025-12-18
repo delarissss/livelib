@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Мои предпочтения - LiveLib</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Главная</a></li>
+      <li><a th:href="@{/books/all}">Все книги</a></li>
+      <li><a th:href="@{/books/search}">Поиск</a></li>
+      <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+      <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+      <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+      <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Мои предпочтения</h1>
+  <div th:if="${successMessage}" class="success" th:text="${successMessage}">Сообщение об успехе</div>
+  <table>
+    <thead>
+    <tr>
+      <th>Тип</th>
+      <th>Элемент</th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pref : ${preferences}">
+      <td th:text="${pref.itemType}">Тип</td>
+      <td th:text="${pref.itemName}">Название элемента</td>
+      <td>
+        <form th:action="@{/user-preferences/delete/{id}(id=${pref.id})}" method="post" style="display:inline;">
+          <button type="submit" onclick="return confirm('Удалить предпочтение?')">Удалить</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <p><a th:href="@{/}">Добавить предпочтение (через интерфейс на главной или странице книги/автора/жанра)</a></p>
+</main>
+
+<footer>
+  <!-- Подвал -->
+</footer>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Мой читательский дневник - LiveLib</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Главная</a></li>
+      <li><a th:href="@{/books/all}">Все книги</a></li>
+      <li><a th:href="@{/books/search}">Поиск</a></li>
+      <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+      <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+      <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+      <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Мой читательский дневник</h1>
+  <div th:if="${successMessage}" class="success" th:text="${successMessage}">Сообщение об успехе</div>
+  <table>
+    <thead>
+    <tr>
+      <th>Книга</th>
+      <th>Статус</th>
+      <th>Оценка</th>
+      <th>Заметка</th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="rl : ${readingLogs}">
+      <td><a th:href="@{/books/details/{id}(id=${rl.book.id})}" th:text="${rl.book.title}">Название книги</a></td>
+      <td th:text="${rl.status}">Статус</td>
+      <td th:text="${rl.rating} != null ? ${rl.rating} : 'Нет'">Оценка</td>
+      <td th:text="${rl.note} != null ? ${rl.note} : 'Нет'">Заметка</td>
+      <td>
+        <a th:href="@{/reading-log/edit/{id}(id=${rl.id})}">Редактировать</a>
+        <form th:action="@{/reading-log/delete/{id}(id=${rl.id})}" method="post" style="display:inline;">
+          <button type="submit" onclick="return confirm('Удалить запись?')">Удалить</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+
+<footer>
+  <!-- Подвал -->
+</footer>
+</body>
+</html>

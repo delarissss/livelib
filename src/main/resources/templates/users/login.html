@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход - LiveLib</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Главная</a></li>
+      <li><a th:href="@{/books/all}">Все книги</a></li>
+      <li><a th:href="@{/books/search}">Поиск</a></li>
+      <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+      <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+      <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+      <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Вход</h1>
+  <div th:if="${errorMessage}" class="error" th:text="${errorMessage}">Сообщение об ошибке</div>
+  <form th:action="@{/users/login}" method="post">
+    <label for="username">
+      Логин
+      <input id="username"
+             name="username"
+             th:value="${username}"
+             type="text"
+             placeholder="Введите логин"
+             required/>
+    </label>
+
+    <label for="password">
+      Пароль
+      <input id="password"
+             name="password"
+             type="password"
+             placeholder="Введите пароль"
+             required/>
+    </label>
+
+    <button type="submit">Войти</button>
+  </form>
+  <p><a th:href="@{/users/register}">Нет аккаунта? Зарегистрироваться</a></p>
+</main>
+
+<footer>
+  <!-- Подвал -->
+</footer>
+</body>
+</html>

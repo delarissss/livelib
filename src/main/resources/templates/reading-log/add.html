@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Добавить в дневник - LiveLib</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Главная</a></li>
+      <li><a th:href="@{/books/all}">Все книги</a></li>
+      <li><a th:href="@{/books/search}">Поиск</a></li>
+      <li><a th:href="@{/books/recommended}" sec:authorize="isAuthenticated()">Рекомендации</a></li>
+      <li><a th:href="@{/users/profile}" sec:authorize="isAuthenticated()">Профиль</a></li>
+      <li><a th:href="@{/users/login}" sec:authorize="!isAuthenticated()">Вход</a></li>
+      <li><a th:href="@{/users/register}" sec:authorize="!isAuthenticated()">Регистрация</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/books/add}">Добавить книгу</a></li>
+      <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/reviews/admin}">Модерация отзывов</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Добавить книгу в дневник</h1>
+  <form th:action="@{/reading-log/add}" th:object="${logForm}" method="post">
+    <div th:if="${#fields.hasErrors('*')}" class="error">
+      <ul>
+        <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Ошибка</li>
+      </ul>
+    </div>
+    <input type="hidden" th:field="*{bookId}" th:value="${bookId}">
+    <label for="status">Статус:</label>
+    <select id="status" th:field="*{status}" required>
+      <option th:each="statusName : ${statuses}" th:value="${statusName}" th:text="${statusName}">Статус</option>
+    </select><br><br>
+
+    <label for="rating">Оценка (1-10):</label>
+    <input type="number" id="rating" th:field="*{rating}" min="1" max="10"><br><br>
+
+    <label for="note">Заметка:</label><br>
+    <textarea id="note" th:field="*{note}" rows="4" cols="50"></textarea><br><br>
+
+    <button type="submit">Добавить в дневник</button>
+  </form>
+</main>
+
+<footer>
+  <!-- Подвал -->
+</footer>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{fragments/head :: headFragment}"></th:block>
+<body>
+<header th:replace="~{fragments/navbar :: navbarFragment}"></header>
+<main>
+  <article>
+    <hgroup>
+      <h1 th:text="${errorCode} + ' - ' + ${errorTitle}">Ошибка</h1>
+      <p th:text="${errorMessage}">Произошла ошибка</p>
+    </hgroup>
+    <div>
+      <a href="/">Вернуться на главную</a>
+      <a href="javascript:history.back()">Назад</a>
+    </div>
+  </article>
+</main>
+<footer th:replace="~{fragments/footer :: footerFragment}"></footer>
+</body>
+</html>

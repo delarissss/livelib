@@ -1,0 +1,50 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # База данных PostgreSQL
+  db:
+    image: postgres:17-alpine # Используем легковесный образ
+    container_name: livelib_db
+    environment:
+      POSTGRES_DB: livelib # Имя базы данных
+      POSTGRES_USER: user # Имя пользователя
+      POSTGRES_PASSWORD: pass # Пароль
+    ports:
+      - "5432:5432" # Открываем порт для доступа с хоста (опционально)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Сохраняем данные в именованном томе
+    restart: unless-stopped
+
+  # Кэш Redis
+  redis:
+    image: redis:7-alpine # Используем легковесный образ
+    container_name: livelib_redis
+    ports:
+      - "6379:6379"# Открываем порт для доступа с хоста (опционально)
+    restart: unless-stopped
+
+
+  # Веб-приложение Spring Boot
+  app:
+    build: . # Указывает Docker Compose собрать образ из Dockerfile в текущей директории
+    container_name: livelib_app
+    ports:
+      - "8080:8080" # Открываем порт 8080 для доступа к приложению с хоста
+    environment:
+      # Конфигурация Spring Boot для подключения к PostgreSQL
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/livelib
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+      # Конфигурация Spring Boot для подключения к Redis
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      # (Опционально) Уровень логирования
+      LOGGING_LEVEL_COM_EXAMPLE_LIVELIB: DEBUG
+    depends_on:
+      - db
+      - redis # Убедитесь, что db и redis запущены перед app
+    restart: unless-stopped
+
+volumes:
+  postgres_data: # Определяем именованный том для PostgreSQL
