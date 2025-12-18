@@ -108,7 +108,7 @@ public class AuthController {
         model.addAttribute("booksByStatus", booksByStatus); // Передаем сгруппированные книги
         return "users/profile";
     }
-    @GetMapping("/users/login-error")
+    @GetMapping("/login-error")
     public String loginError(Model model) {
         model.addAttribute("errorMessage", "Неверный email или пароль.");
         return "users/login";
