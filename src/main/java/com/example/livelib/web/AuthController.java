@@ -108,10 +108,9 @@ public class AuthController {
         model.addAttribute("booksByStatus", booksByStatus); // Передаем сгруппированные книги
         return "users/profile";
     }
-    // В AuthController
     @GetMapping("/users/login-error")
     public String loginError(Model model) {
-        model.addAttribute("loginError", true); // Передаем флаг ошибки в шаблон
-        return "users/login"; // Возвращаем шаблон входа
+        model.addAttribute("errorMessage", "Неверный email или пароль.");
+        return "users/login";
     }
 }
