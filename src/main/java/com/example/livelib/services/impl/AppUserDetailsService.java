@@ -24,21 +24,14 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Загрузка userDetails для пользователя: {}", username);
-        Optional<com.example.livelib.models.entities.User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isEmpty()) {
-            userOpt = userRepository.findByEmail(username);
-        }
-        return userOpt.map(u -> new User(
-                        u.getUsername(),
-                        u.getPassword(),
-                        true, // isEnabled
-                        true, // accountNonExpired
-                        true, // credentialsNonExpired
-                        true, // accountNonLocked
-                        u.getRoles().stream()
-                                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName().name())) // ROLE_USER, ROLE_ADMIN
+        return userRepository.findByUsername(username)
+                        .map(u -> User.builder()
+                                .username(u.getUsername())
+                                .password(u.getPassword())
+                                .authorities(u.getRoles().stream()
+                                        .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName().name())) // ROLE_USER, ROLE_ADMIN
                                 .collect(Collectors.toList())
-                ))
+                ).build())
                 .orElseThrow(() -> {
                     log.warn("Пользователь не найден при загрузке userDetails: {}", username);
                     return new UsernameNotFoundException("User " + username + " was not found!");
