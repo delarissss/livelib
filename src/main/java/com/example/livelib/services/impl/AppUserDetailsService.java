@@ -27,10 +27,6 @@ public class AppUserDetailsService implements UserDetailsService {
                 .map(u -> new User(
                         u.getUsername(),
                         u.getPassword(),
-                        true, // enabled
-                        true, // accountNonExpired
-                        true, // credentialsNonExpired
-                        true, // accountNonLocked
                         u.getRoles().stream()
                                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName().name())) // ROLE_USER, ROLE_ADMIN
                                 .collect(Collectors.toList())

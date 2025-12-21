@@ -20,6 +20,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;

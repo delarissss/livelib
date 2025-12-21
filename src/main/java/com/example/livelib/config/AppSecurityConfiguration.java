@@ -3,31 +3,36 @@ package com.example.livelib.config;
 import com.example.livelib.models.enums.UserRoles;
 import com.example.livelib.repos.UserRepository;
 import com.example.livelib.services.impl.AppUserDetailsService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 
 @Slf4j
 @Configuration
-@EnableWebSecurity
-@RequiredArgsConstructor
 public class AppSecurityConfiguration {
 
     private final UserRepository userRepository;
 
+    public AppSecurityConfiguration(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        log.info("AppSecurityConfiguration инициализирована");
+    }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextRepository securityContextRepository) throws Exception {
         http
-                .authorizeHttpRequests(authz -> authz
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/favicon.ico", "/error").permitAll()
                         .requestMatchers("/", "/users/login", "/users/register", "/users/login-error", "/books/search", "/books/details/**").permitAll()
@@ -44,9 +49,10 @@ public class AppSecurityConfiguration {
                         .permitAll()
                 )
                 .rememberMe(remember -> remember
-                        .key("uniqueAndSecretKeyForLivelib")
+                        .key("uniqueAndSecretKey")
                         .tokenValiditySeconds(86400 * 7)
                         .userDetailsService(userDetailsService())
+                        .rememberMeParameter("remember-me")
                 )
                 .logout(logout -> logout
                         .logoutUrl("/users/logout")
@@ -55,13 +61,24 @@ public class AppSecurityConfiguration {
                         .deleteCookies("JSESSIONID", "remember-me")
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.disable());
+                .securityContext(securityContext -> securityContext
+                        .securityContextRepository(securityContextRepository)
+                )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/actuator/**")
+                );
 
         log.info("SecurityFilterChain настроен");
         return http.build();
     }
 
-
+    @Bean
+    public SecurityContextRepository securityContextRepository() {
+        return new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(),
+                new HttpSessionSecurityContextRepository()
+        );
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
