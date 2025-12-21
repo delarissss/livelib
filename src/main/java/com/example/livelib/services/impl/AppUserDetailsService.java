@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,10 +24,20 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Загрузка userDetails для пользователя: {}", username);
-        return userRepository.findByUsername(username)
-                .map(u -> new User(
+        
+        // Попробовать найти по username, затем по email
+        Optional<com.example.livelib.models.entities.User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isEmpty()) {
+            userOpt = userRepository.findByEmail(username);
+        }
+        
+        return userOpt.map(u -> new org.springframework.security.core.userdetails.User(
                         u.getUsername(),
                         u.getPassword(),
+                        true, // isEnabled
+                        true, // accountNonExpired
+                        true, // credentialsNonExpired
+                        true, // accountNonLocked
                         u.getRoles().stream()
                                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName().name())) // ROLE_USER, ROLE_ADMIN
                                 .collect(Collectors.toList())
