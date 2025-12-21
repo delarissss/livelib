@@ -3,49 +3,22 @@
 *.o
 *.obj
 *.out
+*.dll
+*.so
+*.a
 *.pyc
 __pycache__/
-*.pyo
-*.pyd
-*.so
-*.dll
-*.exe
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.tar
-*.gz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
 
 # Dependencies
 node_modules/
 venv/
 .venv/
-.env
-.env.local
-.env.*
-target/
-.gradle/
 .mypy_cache/
 .pytest_cache/
-coverage/
-htmlcov/
-.coverage
+target/
+.gradle/
+dist/
+build/
 
 # Logs and temp files
 *.log
@@ -53,53 +26,29 @@ htmlcov/
 *.swp
 *.swo
 
+# Environment
+.env
+.env.local
+*.env.*
+
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
 # System files
 .DS_Store
 Thumbs.db
-*.DS_Store
-ehthumbs.db
-Icon?
-.CFUserTextEncoding
 
-# Build directories
-build/
-dist/
-out/
-bin/
-obj/
-lib/
-logs/
-tmp/
-temp/
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
-# IDE specific
-*.iml
-*.ipr
-*.iws
-*.project
-*.pydevproject
-.settings/
-nbproject/
-*.nib
-*.class
-*.o
-*.so
-*.dylib
-*.dll
-*.exe
-*.jar
-*.war
-*.ear
+# Archives
 *.zip
-*.tar.gz
-*.tar
 *.gz
+*.tar
+*.tgz
 *.bz2
 *.xz
 *.7z
@@ -114,3 +63,7 @@ nbproject/
 *.Z
 *.lz
 *.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst

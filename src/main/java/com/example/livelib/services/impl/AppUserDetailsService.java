@@ -1,11 +1,11 @@
 // src/main/java/com/example/livelib/security/AppUserDetailsService.java
 package com.example.livelib.services.impl;
 
+import com.example.livelib.models.entities.User;
 import com.example.livelib.repos.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,13 +24,13 @@ public class AppUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Загрузка userDetails для пользователя: {}", username);
         return userRepository.findByUsername(username)
-                .map(u -> new User(
-                        u.getUsername(),
-                        u.getPassword(),
-                        u.getRoles().stream()
+                .map(u -> org.springframework.security.core.userdetails.User.builder()
+                        .username(u.getUsername())
+                        .password(u.getPassword())
+                        .authorities(u.getRoles().stream()
                                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName().name())) // ROLE_USER, ROLE_ADMIN
-                                .collect(Collectors.toList())
-                ))
+                                .collect(Collectors.toList()))
+                        .build())
                 .orElseThrow(() -> {
                     log.warn("Пользователь не найден при загрузке userDetails: {}", username);
                     return new UsernameNotFoundException("User " + username + " was not found!");
