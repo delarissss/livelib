@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Setter;
 
 @Setter
+
 @Entity
 @Table(name = "roles")
 public class Role extends BaseEntity {

@@ -10,6 +10,7 @@ import java.util.List;
 
 @Setter
 @Getter
+
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity implements Serializable {

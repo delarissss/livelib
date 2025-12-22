@@ -31,7 +31,7 @@ public class Book extends BaseEntity {
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(
             name = "book_genres",
             joinColumns = @JoinColumn(name = "book_id"),

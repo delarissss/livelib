@@ -4,12 +4,12 @@ import com.example.livelib.models.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
+
 @Entity
 @Table(name = "reading_log")
 public class ReadingLog extends BaseEntity {
